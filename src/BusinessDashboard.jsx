@@ -3,14 +3,16 @@ import maharashtraLogo from "./assets/maharashtra-logo.png";
 import ApplicationSetup from "./ApplicationSetup";
 import ApprovalRoadmap from "./ApprovalRoadmap";
 import {
+  IconHome,
+  IconFileText,
   IconRoadmap,
   IconBot,
-  IconShieldCheck,
   IconFileCheck,
   IconClockAlert,
   IconRepeat,
   IconAward,
   IconBell,
+  IconUser,
   IconBuilding,
   IconCheck,
   IconArrowRight,
@@ -18,12 +20,12 @@ import {
   IconAlertTriangle,
   IconInfo,
   IconPlus,
-  IconHome,
-  IconFileText
+  IconShieldCheck
 } from "./Icons";
 
 function BusinessDashboard({ onLogout, onNavigateHome }) {
-  const [activeView, setActiveView] = useState("overview"); // overview, roadmap, ai-assistant, pre-validation, document-reuse, delay-prediction, compliance, schemes, alerts
+  // Simplified Views: dashboard, applications, roadmap, ai-assistant, documents, delay-alerts, compliance, schemes, notifications, profile
+  const [activeView, setActiveView] = useState("dashboard");
   const [showApplication, setShowApplication] = useState(false);
   const [showRoadmap, setShowRoadmap] = useState(false);
   const [applicationData, setApplicationData] = useState(null);
@@ -34,7 +36,7 @@ function BusinessDashboard({ onLogout, onNavigateHome }) {
   const [tableStatusFilter, setTableStatusFilter] = useState("all");
 
   // Accessibility font scaling
-  const [fontSizeLevel, setFontSizeLevel] = useState(1); // 0 = A-, 1 = A, 2 = A+
+  const [fontSizeLevel, setFontSizeLevel] = useState(1);
 
   // Fetch applications from PostgreSQL
   useEffect(() => {
@@ -134,8 +136,10 @@ function BusinessDashboard({ onLogout, onNavigateHome }) {
       const st = (app.status || "Draft").toLowerCase();
       if (tableStatusFilter === "all") return true;
       if (tableStatusFilter === "approved") return st === "approved";
-      if (tableStatusFilter === "in-progress") return st === "in progress" || st === "in review" || st === "under review";
-      if (tableStatusFilter === "action-required") return st === "action required";
+      if (tableStatusFilter === "in-progress")
+        return st === "in progress" || st === "in review" || st === "under review";
+      if (tableStatusFilter === "action-required")
+        return st === "action required";
       if (tableStatusFilter === "draft") return st === "draft";
       return true;
     });
@@ -159,14 +163,14 @@ function BusinessDashboard({ onLogout, onNavigateHome }) {
     setShowRoadmap(true);
   };
 
-  // Switch font size
+  // Font size toggle
   const handleFontSize = (level) => {
     setFontSizeLevel(level);
     const size = level === 0 ? "13px" : level === 1 ? "14px" : "15px";
     document.documentElement.style.fontSize = size;
   };
 
-  // If opening application setup
+  // Sub-flow: New application
   if (showApplication) {
     return (
       <ApplicationSetup
@@ -180,7 +184,7 @@ function BusinessDashboard({ onLogout, onNavigateHome }) {
     );
   }
 
-  // If opening roadmap
+  // Sub-flow: Roadmap
   if (showRoadmap) {
     return (
       <ApprovalRoadmap
@@ -192,9 +196,7 @@ function BusinessDashboard({ onLogout, onNavigateHome }) {
 
   return (
     <div className="portal-layout">
-      {/* =========================================================================
-          1. TOP OFFICIAL GOVERNMENT HEADER BAR
-         ========================================================================= */}
+      {/* 1. TOP GOVERNMENT HEADER */}
       <header className="gov-topbar">
         <div className="gov-topbar-inner">
           <div className="gov-topbar-brand">
@@ -208,15 +210,15 @@ function BusinessDashboard({ onLogout, onNavigateHome }) {
                 <strong>Government of Maharashtra</strong> · महाराष्ट्र शासन
               </div>
               <div className="gov-dept-name">
-                Department of Industries · MAITRI Single Window Portal
+                Department of Industries · UdyogFlow Portal
               </div>
             </div>
           </div>
 
           <div className="gov-topbar-tools">
-            {/* Accessibility Font Resizer */}
+            {/* Font Resizer */}
             <div className="gov-accessibility">
-              <span className="gov-tool-label">Text Size:</span>
+              <span className="gov-tool-label">Text:</span>
               <button
                 type="button"
                 className={`tool-btn ${fontSizeLevel === 0 ? "active" : ""}`}
@@ -243,28 +245,28 @@ function BusinessDashboard({ onLogout, onNavigateHome }) {
               </button>
             </div>
 
-            <div className="gov-badge-secure">
-              <IconShieldCheck size={14} />
-              <span>SSL 256-Bit Verified</span>
-            </div>
-
             <button
               type="button"
               className="gov-bell-btn"
-              onClick={() => setActiveView("alerts")}
+              onClick={() => setActiveView("notifications")}
               title="Notifications"
             >
               <IconBell size={18} />
               <span className="bell-badge">3</span>
             </button>
 
-            <div className="gov-user-chip">
+            <button
+              type="button"
+              className="gov-user-chip"
+              onClick={() => setActiveView("profile")}
+              title="User Profile"
+            >
               <div className="user-avatar">B</div>
               <div className="user-meta">
-                <span className="user-name">Business Investor</span>
-                <span className="user-role">Maharashtra Industrial Unit</span>
+                <span className="user-name">Business User</span>
+                <span className="user-role">Maharashtra Investor</span>
               </div>
-            </div>
+            </button>
 
             {(onLogout || onNavigateHome) && (
               <button
@@ -279,25 +281,27 @@ function BusinessDashboard({ onLogout, onNavigateHome }) {
         </div>
       </header>
 
-      {/* =========================================================================
-          2. MAIN PORTAL BODY (SIDEBAR + MAIN CONTENT AREA)
-         ========================================================================= */}
+      {/* 2. BODY: SIDEBAR + MAIN VIEW */}
       <div className="portal-body-wrapper">
-        {/* Left Navigation Sidebar */}
+        {/* Simplified Sidebar */}
         <aside className="portal-sidebar">
-          <div className="sidebar-brand-badge">
-            <div className="brand-dot"></div>
-            <span>PORTAL NAVIGATION</span>
-          </div>
-
           <nav className="sidebar-nav">
             <button
               type="button"
-              className={`nav-item ${activeView === "overview" ? "active" : ""}`}
-              onClick={() => setActiveView("overview")}
+              className={`nav-item ${activeView === "dashboard" ? "active" : ""}`}
+              onClick={() => setActiveView("dashboard")}
             >
               <IconHome size={18} />
-              <span>Dashboard Overview</span>
+              <span>Dashboard</span>
+            </button>
+
+            <button
+              type="button"
+              className={`nav-item ${activeView === "applications" ? "active" : ""}`}
+              onClick={() => setActiveView("applications")}
+            >
+              <IconFileText size={18} />
+              <span>Applications</span>
             </button>
 
             <button
@@ -312,7 +316,7 @@ function BusinessDashboard({ onLogout, onNavigateHome }) {
               }}
             >
               <IconRoadmap size={18} />
-              <span>Smart Approval Roadmap</span>
+              <span>Approval Roadmap</span>
             </button>
 
             <button
@@ -321,34 +325,25 @@ function BusinessDashboard({ onLogout, onNavigateHome }) {
               onClick={() => setActiveView("ai-assistant")}
             >
               <IconBot size={18} />
-              <span>AI Industrial Assistant</span>
+              <span>AI Assistant</span>
             </button>
 
             <button
               type="button"
-              className={`nav-item ${activeView === "pre-validation" ? "active" : ""}`}
-              onClick={() => setActiveView("pre-validation")}
+              className={`nav-item ${activeView === "documents" ? "active" : ""}`}
+              onClick={() => setActiveView("documents")}
             >
               <IconFileCheck size={18} />
-              <span>Document Pre-Validation</span>
+              <span>Documents</span>
             </button>
 
             <button
               type="button"
-              className={`nav-item ${activeView === "document-reuse" ? "active" : ""}`}
-              onClick={() => setActiveView("document-reuse")}
-            >
-              <IconShieldCheck size={18} />
-              <span>Secure Document Reuse</span>
-            </button>
-
-            <button
-              type="button"
-              className={`nav-item ${activeView === "delay-prediction" ? "active" : ""}`}
-              onClick={() => setActiveView("delay-prediction")}
+              className={`nav-item ${activeView === "delay-alerts" ? "active" : ""}`}
+              onClick={() => setActiveView("delay-alerts")}
             >
               <IconClockAlert size={18} />
-              <span>Delay Prediction & SLA</span>
+              <span>Delay Alerts</span>
             </button>
 
             <button
@@ -357,7 +352,7 @@ function BusinessDashboard({ onLogout, onNavigateHome }) {
               onClick={() => setActiveView("compliance")}
             >
               <IconRepeat size={18} />
-              <span>Compliance & Renewals</span>
+              <span>Compliance</span>
             </button>
 
             <button
@@ -366,58 +361,51 @@ function BusinessDashboard({ onLogout, onNavigateHome }) {
               onClick={() => setActiveView("schemes")}
             >
               <IconAward size={18} />
-              <span>Government Schemes & PSI</span>
+              <span>Government Schemes</span>
             </button>
 
             <button
               type="button"
-              className={`nav-item ${activeView === "alerts" ? "active" : ""}`}
-              onClick={() => setActiveView("alerts")}
+              className={`nav-item ${activeView === "notifications" ? "active" : ""}`}
+              onClick={() => setActiveView("notifications")}
             >
               <IconBell size={18} />
-              <span>Alerts & Notifications</span>
+              <span>Notifications</span>
               <span className="sidebar-count">3</span>
+            </button>
+
+            <button
+              type="button"
+              className={`nav-item ${activeView === "profile" ? "active" : ""}`}
+              onClick={() => setActiveView("profile")}
+            >
+              <IconUser size={18} />
+              <span>Profile</span>
             </button>
           </nav>
 
-          {/* Quick Help Card */}
+          {/* Helpline box */}
           <div className="sidebar-helpline-box">
             <div className="helpline-header">
               <IconInfo size={16} />
-              <strong>MAITRI Nodal Desk</strong>
+              <strong>Investor Helpline</strong>
             </div>
-            <p>Toll-Free Investor Helpline:</p>
             <span className="helpline-phone">1800 120 8040</span>
             <small>Mon - Sat (9:30 AM to 6:00 PM)</small>
-            <button
-              type="button"
-              className="helpline-ai-btn"
-              onClick={() => setActiveView("ai-assistant")}
-            >
-              Launch AI Assistant →
-            </button>
           </div>
 
           <div className="sidebar-footer-note">
-            <span>UdyogFlow Platform v2.4</span>
-            <small>Govt of Maharashtra Industrial Portal</small>
+            <span>UdyogFlow · Govt of Maharashtra</span>
           </div>
         </aside>
 
-        {/* Main Content Pane */}
+        {/* Main Content Area */}
         <main className="portal-main-content">
-          {/* Top Welcome & New Application Banner */}
+          {/* Top Banner */}
           <div className="portal-hero-strip">
             <div className="hero-text-group">
-              <div className="hero-badge">
-                <span className="badge-live-pulse"></span>
-                <span>SINGLE WINDOW INDUSTRIAL COMPLIANCE PORTAL</span>
-              </div>
-              <h1>Industrial Investor Workspace</h1>
-              <p>
-                Track regulatory scrutiny under the Maharashtra Public Services Guarantee Act.
-                All applications are synchronized in real-time with the central MAITRI PostgreSQL repository.
-              </p>
+              <h1>Business Dashboard</h1>
+              <p>Track your applications, statutory clearances, and compliance in one place.</p>
             </div>
             <div className="hero-action-group">
               <button
@@ -425,137 +413,124 @@ function BusinessDashboard({ onLogout, onNavigateHome }) {
                 className="btn-create-app"
                 onClick={() => setShowApplication(true)}
               >
-                <IconPlus size={18} />
-                <span>Submit New Application</span>
+                <IconPlus size={16} />
+                <span>New Application</span>
               </button>
             </div>
           </div>
 
-          {/* =====================================================================
-              VIEW: OVERVIEW (DEFAULT DASHBOARD VIEW)
-             ===================================================================== */}
-          {activeView === "overview" && (
+          {/* ===================================================================
+              VIEW: DASHBOARD (OVERVIEW)
+             =================================================================== */}
+          {activeView === "dashboard" && (
             <div className="overview-container">
-              {/* 1. Statistics Cards Row */}
+              {/* 4 Stat Cards */}
               <section className="kpi-summary-row">
-                <div className="stat-card stat-blue">
+                <div
+                  className="stat-card stat-blue cursor-pointer"
+                  onClick={() => setActiveView("applications")}
+                >
                   <div className="stat-icon-wrapper">
-                    <IconBuilding size={22} />
+                    <IconBuilding size={20} />
                   </div>
                   <div className="stat-data">
-                    <span className="stat-label">Total Submissions</span>
+                    <span className="stat-label">Total Applications</span>
                     <strong className="stat-number">
                       {loadingApplications ? "..." : String(statistics.total).padStart(2, "0")}
                     </strong>
-                    <span className="stat-subtext">Registered in MAITRI DB</span>
+                    <span className="stat-subtext">Registered in database</span>
                   </div>
                 </div>
 
                 <div className="stat-card stat-green">
                   <div className="stat-icon-wrapper">
-                    <IconCheck size={22} />
+                    <IconCheck size={20} />
                   </div>
                   <div className="stat-data">
-                    <span className="stat-label">Approved Clearances</span>
+                    <span className="stat-label">Approved</span>
                     <strong className="stat-number">
                       {loadingApplications ? "..." : String(statistics.approved).padStart(2, "0")}
                     </strong>
-                    <span className="stat-subtext">Issued digitally</span>
+                    <span className="stat-subtext">Clearances issued</span>
                   </div>
                 </div>
 
                 <div className="stat-card stat-amber">
                   <div className="stat-icon-wrapper">
-                    <IconClockAlert size={22} />
+                    <IconClockAlert size={20} />
                   </div>
                   <div className="stat-data">
-                    <span className="stat-label">Under Department Review</span>
+                    <span className="stat-label">In Progress</span>
                     <strong className="stat-number">
                       {loadingApplications ? "..." : String(statistics.inProgress).padStart(2, "0")}
                     </strong>
-                    <span className="stat-subtext">Active SLA monitoring</span>
+                    <span className="stat-subtext">Under department scrutiny</span>
                   </div>
                 </div>
 
                 <div className="stat-card stat-red">
                   <div className="stat-icon-wrapper">
-                    <IconAlertTriangle size={22} />
+                    <IconAlertTriangle size={20} />
                   </div>
                   <div className="stat-data">
                     <span className="stat-label">Action Required</span>
                     <strong className="stat-number">
                       {loadingApplications ? "..." : String(statistics.actionRequired).padStart(2, "0")}
                     </strong>
-                    <span className="stat-subtext">Clarification requested</span>
+                    <span className="stat-subtext">Requires your attention</span>
                   </div>
                 </div>
               </section>
 
-              {/* 2. Grid Row: Real Applications Table + Application Status Donut */}
+              {/* Grid: Applications Table + Status Donut */}
               <section className="portal-grid-two">
-                {/* Real Applications Table */}
+                {/* Recent Applications Card */}
                 <div className="portal-card applications-card">
                   <div className="card-header-bar">
                     <div className="header-titles">
                       <IconFileText size={18} />
                       <div>
-                        <h2>PostgreSQL Registered Applications</h2>
-                        <p>Live industrial filings fetched from backend database</p>
+                        <h2>Recent Applications</h2>
+                        <p>Live applications saved in PostgreSQL</p>
                       </div>
                     </div>
-                    <div className="card-controls">
-                      <div className="table-search-input">
-                        <IconSearch size={14} />
-                        <input
-                          type="text"
-                          placeholder="Search enterprise, sector..."
-                          value={tableSearch}
-                          onChange={(e) => setTableSearch(e.target.value)}
-                        />
-                      </div>
-                      <select
-                        className="table-filter-select"
-                        value={tableStatusFilter}
-                        onChange={(e) => setTableStatusFilter(e.target.value)}
-                      >
-                        <option value="all">All Statuses</option>
-                        <option value="approved">Approved</option>
-                        <option value="in-progress">In Progress</option>
-                        <option value="action-required">Action Required</option>
-                        <option value="draft">Draft</option>
-                      </select>
-                    </div>
+                    <button
+                      type="button"
+                      className="link-btn"
+                      onClick={() => setActiveView("applications")}
+                    >
+                      View All →
+                    </button>
                   </div>
 
                   <div className="table-responsive">
                     <table className="gov-data-table">
                       <thead>
                         <tr>
-                          <th>App ID</th>
-                          <th>Enterprise & Sector</th>
+                          <th>ID</th>
+                          <th>Business & Sector</th>
                           <th>Location</th>
-                          <th>Current Status</th>
-                          <th>Filed Date</th>
+                          <th>Status</th>
                           <th>Action</th>
                         </tr>
                       </thead>
                       <tbody>
                         {loadingApplications ? (
                           <tr>
-                            <td colSpan="6" className="table-empty-cell">
+                            <td colSpan="5" className="table-empty-cell">
                               <div className="table-spinner"></div>
-                              <span>Loading live application records from PostgreSQL...</span>
+                              <span>Loading applications...</span>
                             </td>
                           </tr>
-                        ) : filteredApplications.length === 0 ? (
+                        ) : applications.length === 0 ? (
                           <tr>
-                            <td colSpan="6" className="table-empty-cell">
-                              <IconInfo size={24} />
-                              <p>No application records found matching filter.</p>
+                            <td colSpan="5" className="table-empty-cell">
+                              <IconInfo size={20} />
+                              <p>No applications yet. Click 'New Application' to start.</p>
                             </td>
                           </tr>
                         ) : (
-                          filteredApplications.slice(0, 6).map((app) => {
+                          applications.slice(0, 4).map((app) => {
                             const status = app.status || "Draft";
                             const lower = status.toLowerCase();
                             let badgeClass = "badge-pending";
@@ -569,7 +544,7 @@ function BusinessDashboard({ onLogout, onNavigateHome }) {
                               <tr key={app.application_id}>
                                 <td>
                                   <span className="app-code">
-                                    APP-{String(app.application_id).padStart(4, "0")}
+                                    #{app.application_id}
                                   </span>
                                 </td>
                                 <td>
@@ -584,17 +559,6 @@ function BusinessDashboard({ onLogout, onNavigateHome }) {
                                 <td>
                                   <span className={`status-pill ${badgeClass}`}>
                                     {status}
-                                  </span>
-                                </td>
-                                <td>
-                                  <span className="date-tag">
-                                    {app.created_at
-                                      ? new Date(app.created_at).toLocaleDateString("en-IN", {
-                                          day: "2-digit",
-                                          month: "short",
-                                          year: "numeric",
-                                        })
-                                      : "Recent"}
                                   </span>
                                 </td>
                                 <td>
@@ -616,14 +580,14 @@ function BusinessDashboard({ onLogout, onNavigateHome }) {
                   </div>
                 </div>
 
-                {/* Donut Chart & Breakdown */}
+                {/* Status Donut Chart */}
                 <div className="portal-card status-breakdown-card">
                   <div className="card-header-bar">
                     <div className="header-titles">
                       <IconShieldCheck size={18} />
                       <div>
-                        <h2>Clearance Status Ratio</h2>
-                        <p>Aggregated statutory compliance overview</p>
+                        <h2>Status Breakdown</h2>
+                        <p>Current distribution of your filings</p>
                       </div>
                     </div>
                   </div>
@@ -634,7 +598,7 @@ function BusinessDashboard({ onLogout, onNavigateHome }) {
                         <strong className="donut-total">
                           {loadingApplications ? "..." : String(statistics.total).padStart(2, "0")}
                         </strong>
-                        <span className="donut-caption">Applications</span>
+                        <span className="donut-caption">Total</span>
                       </div>
                     </div>
 
@@ -642,32 +606,32 @@ function BusinessDashboard({ onLogout, onNavigateHome }) {
                       <div className="legend-item">
                         <span className="legend-marker marker-green"></span>
                         <div className="legend-text">
-                          <span>Approved & Issued</span>
-                          <strong>{statistics.approved} Files</strong>
+                          <span>Approved</span>
+                          <strong>{statistics.approved}</strong>
                         </div>
                       </div>
 
                       <div className="legend-item">
                         <span className="legend-marker marker-amber"></span>
                         <div className="legend-text">
-                          <span>Department Scrutiny</span>
-                          <strong>{statistics.inProgress} Files</strong>
+                          <span>In Progress</span>
+                          <strong>{statistics.inProgress}</strong>
                         </div>
                       </div>
 
                       <div className="legend-item">
                         <span className="legend-marker marker-red"></span>
                         <div className="legend-text">
-                          <span>Action / Clarification</span>
-                          <strong>{statistics.actionRequired + statistics.rejected} Files</strong>
+                          <span>Action Needed</span>
+                          <strong>{statistics.actionRequired + statistics.rejected}</strong>
                         </div>
                       </div>
 
                       <div className="legend-item">
                         <span className="legend-marker marker-slate"></span>
                         <div className="legend-text">
-                          <span>Draft / In Preparation</span>
-                          <strong>{statistics.draft} Files</strong>
+                          <span>Draft</span>
+                          <strong>{statistics.draft}</strong>
                         </div>
                       </div>
                     </div>
@@ -675,125 +639,12 @@ function BusinessDashboard({ onLogout, onNavigateHome }) {
                 </div>
               </section>
 
-              {/* 3. Grid Row: Live Roadmap Progress Snippet & Delay Prediction Radar */}
-              <section className="portal-grid-two">
-                {/* Roadmap Progress Preview */}
-                <div className="portal-card">
-                  <div className="card-header-bar">
-                    <div className="header-titles">
-                      <IconRoadmap size={18} />
-                      <div>
-                        <h2>Active Approval Roadmap Pipeline</h2>
-                        <p>Sequential departmental stages under MAITRI</p>
-                      </div>
-                    </div>
-                    {applications.length > 0 && (
-                      <button
-                        type="button"
-                        className="link-btn"
-                        onClick={() => openRoadmap(applications[0])}
-                      >
-                        Full Roadmap →
-                      </button>
-                    )}
-                  </div>
-
-                  {applications.length > 0 ? (
-                    <div className="roadmap-snippet-body">
-                      <div className="snippet-business-tag">
-                        <span>Active Enterprise: </span>
-                        <strong>{applications[0].business_name}</strong>
-                        <span className="snippet-sector">({applications[0].industry})</span>
-                      </div>
-
-                      <div className="snippet-stages-row">
-                        <div className="snippet-step done">
-                          <div className="step-circle">✓</div>
-                          <span>Registration</span>
-                          <small>Completed</small>
-                        </div>
-                        <div className="snippet-step-line done"></div>
-                        <div className="snippet-step done">
-                          <div className="step-circle">✓</div>
-                          <span>KYC & Land</span>
-                          <small>Verified</small>
-                        </div>
-                        <div className="snippet-step-line active"></div>
-                        <div className="snippet-step active">
-                          <div className="step-circle">3</div>
-                          <span>MPCB CTE</span>
-                          <small>In Review</small>
-                        </div>
-                        <div className="snippet-step-line"></div>
-                        <div className="snippet-step">
-                          <div className="step-circle">4</div>
-                          <span>Factory License</span>
-                          <small>Queued</small>
-                        </div>
-                        <div className="snippet-step-line"></div>
-                        <div className="snippet-step">
-                          <div className="step-circle">5</div>
-                          <span>Operation NOC</span>
-                          <small>Final</small>
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="empty-snippet-box">
-                      <IconInfo size={24} />
-                      <p>No active application roadmap found. Start your first industrial filing above.</p>
-                    </div>
-                  )}
-                </div>
-
-                {/* AI Delay Prediction & Bottleneck Snippet */}
-                <div className="portal-card">
-                  <div className="card-header-bar">
-                    <div className="header-titles">
-                      <IconClockAlert size={18} />
-                      <div>
-                        <h2>AI Delay Prediction & Bottlenecks</h2>
-                        <p>Machine-learned scrutiny timeline warnings</p>
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      className="link-btn"
-                      onClick={() => setActiveView("delay-prediction")}
-                    >
-                      SLA Radar →
-                    </button>
-                  </div>
-
-                  <div className="prediction-snippet-list">
-                    <div className="prediction-row warning">
-                      <div className="pred-icon">⚠️</div>
-                      <div className="pred-content">
-                        <strong>MPCB Site Scrutiny - Regional Office</strong>
-                        <span>Typical queue in selected district is averaging +4 days above SLA. Ensure effluent treatment diagrams are uploaded.</span>
-                      </div>
-                      <span className="risk-tag risk-medium">Medium Risk</span>
-                    </div>
-
-                    <div className="prediction-row safe">
-                      <div className="pred-icon">✅</div>
-                      <div className="pred-content">
-                        <strong>MIDC Water Connection & Power Feasibility</strong>
-                        <span>Sub-station clearance automated on MAITRI platform. Expected approval within 48 hours.</span>
-                      </div>
-                      <span className="risk-tag risk-low">Low Risk</span>
-                    </div>
-                  </div>
-                </div>
-              </section>
-
-              {/* 4. Feature Showcase Carousel / Grid (The 8 Platform Highlights) */}
+              {/* Clean Highlight Cards (1-sentence descriptions) */}
               <section className="feature-highlights-section">
                 <div className="section-title-wrap">
                   <div className="title-left">
-                    <span className="section-eyebrow">UDYOGFLOW PLATFORM CAPABILITIES</span>
-                    <h2>Key Industrial Compliance Modules</h2>
-                    <p>Designed to accelerate industrialization across Maharashtra's 36 districts.</p>
+                    <h2>Platform Features</h2>
+                    <p>Quick access to all industrial approval and compliance modules.</p>
                   </div>
                 </div>
 
@@ -806,11 +657,11 @@ function BusinessDashboard({ onLogout, onNavigateHome }) {
                     }}
                   >
                     <div className="card-icon-header icon-blue">
-                      <IconRoadmap size={22} />
+                      <IconRoadmap size={20} />
                     </div>
-                    <h3>Smart Approval Roadmap</h3>
-                    <p>Dynamic dependency matrix mapping clearances across MPCB, MIDC, Fire, DISH & Revenue.</p>
-                    <span className="card-explore-link">Explore Roadmap →</span>
+                    <h3>Approval Roadmap</h3>
+                    <p>Track your step-by-step statutory clearances and SLA timelines.</p>
+                    <span className="card-explore-link">Open Roadmap →</span>
                   </div>
 
                   <div
@@ -818,47 +669,35 @@ function BusinessDashboard({ onLogout, onNavigateHome }) {
                     onClick={() => setActiveView("ai-assistant")}
                   >
                     <div className="card-icon-header icon-purple">
-                      <IconBot size={22} />
+                      <IconBot size={20} />
                     </div>
                     <h3>AI Assistant</h3>
-                    <p>24/7 intelligent regulatory advisor for Maharashtra industrial policy and clearance FAQs.</p>
-                    <span className="card-explore-link">Ask AI Assistant →</span>
+                    <p>Get instant answers about clearances, MPCB categories, and policies.</p>
+                    <span className="card-explore-link">Ask Assistant →</span>
                   </div>
 
                   <div
                     className="feature-interactive-card"
-                    onClick={() => setActiveView("pre-validation")}
+                    onClick={() => setActiveView("documents")}
                   >
                     <div className="card-icon-header icon-green">
-                      <IconFileCheck size={22} />
+                      <IconFileCheck size={20} />
                     </div>
-                    <h3>Document Pre-Validation</h3>
-                    <p>Automated format checks, signature verification, and resolution testing before filing.</p>
-                    <span className="card-explore-link">Run Validation →</span>
+                    <h3>Documents</h3>
+                    <p>Pre-validate file formats and reuse verified certificates securely.</p>
+                    <span className="card-explore-link">Manage Documents →</span>
                   </div>
 
                   <div
                     className="feature-interactive-card"
-                    onClick={() => setActiveView("document-reuse")}
-                  >
-                    <div className="card-icon-header icon-indigo">
-                      <IconShieldCheck size={22} />
-                    </div>
-                    <h3>Secure Document Reuse</h3>
-                    <p>DigiLocker & Maha-Locker vault eliminating repeated document uploads across departments.</p>
-                    <span className="card-explore-link">View Vault →</span>
-                  </div>
-
-                  <div
-                    className="feature-interactive-card"
-                    onClick={() => setActiveView("delay-prediction")}
+                    onClick={() => setActiveView("delay-alerts")}
                   >
                     <div className="card-icon-header icon-amber">
-                      <IconClockAlert size={22} />
+                      <IconClockAlert size={20} />
                     </div>
-                    <h3>Delay Prediction</h3>
-                    <p>Early-warning bottleneck detection based on historical department turnaround times.</p>
-                    <span className="card-explore-link">Check SLA Radar →</span>
+                    <h3>Delay Alerts</h3>
+                    <p>Identify potential bottlenecks early to prevent project delays.</p>
+                    <span className="card-explore-link">Check Alerts →</span>
                   </div>
 
                   <div
@@ -866,11 +705,11 @@ function BusinessDashboard({ onLogout, onNavigateHome }) {
                     onClick={() => setActiveView("compliance")}
                   >
                     <div className="card-icon-header icon-teal">
-                      <IconRepeat size={22} />
+                      <IconRepeat size={20} />
                     </div>
-                    <h3>Compliance & Renewals</h3>
-                    <p>Statutory calendar for annual factory licenses, environmental returns, and safety audits.</p>
-                    <span className="card-explore-link">Open Calendar →</span>
+                    <h3>Compliance</h3>
+                    <p>Never miss annual license renewals, safety audits, and returns.</p>
+                    <span className="card-explore-link">View Calendar →</span>
                   </div>
 
                   <div
@@ -878,41 +717,205 @@ function BusinessDashboard({ onLogout, onNavigateHome }) {
                     onClick={() => setActiveView("schemes")}
                   >
                     <div className="card-icon-header icon-orange">
-                      <IconAward size={22} />
+                      <IconAward size={20} />
                     </div>
                     <h3>Government Schemes</h3>
-                    <p>Explore Package Scheme of Incentives (PSI 2019), capital subsidies, and power tariff rebates.</p>
-                    <span className="card-explore-link">Calculate Benefits →</span>
+                    <p>Explore subsidies and incentives under Package Scheme of Incentives.</p>
+                    <span className="card-explore-link">View Schemes →</span>
                   </div>
 
                   <div
                     className="feature-interactive-card"
-                    onClick={() => setActiveView("alerts")}
+                    onClick={() => setActiveView("notifications")}
                   >
                     <div className="card-icon-header icon-red">
-                      <IconBell size={22} />
+                      <IconBell size={20} />
                     </div>
-                    <h3>Alerts & Notifications</h3>
-                    <p>Instant multi-channel alerts for deadline reminders, inspection visits, and approval grants.</p>
+                    <h3>Notifications</h3>
+                    <p>Real-time updates on application status and official circulars.</p>
                     <span className="card-explore-link">View Notifications →</span>
+                  </div>
+
+                  <div
+                    className="feature-interactive-card"
+                    onClick={() => setActiveView("profile")}
+                  >
+                    <div className="card-icon-header icon-blue">
+                      <IconUser size={20} />
+                    </div>
+                    <h3>Profile</h3>
+                    <p>Manage your business entity profile and account settings.</p>
+                    <span className="card-explore-link">View Profile →</span>
                   </div>
                 </div>
               </section>
             </div>
           )}
 
-          {/* =====================================================================
-              VIEW: AI ASSISTANT (PROTOTYPE MODULE)
-             ===================================================================== */}
+          {/* ===================================================================
+              VIEW: APPLICATIONS (DEDICATED FULL TABLE)
+             =================================================================== */}
+          {activeView === "applications" && (
+            <div className="module-view-container">
+              <div className="module-header-banner">
+                <h2>All Applications</h2>
+                <p>Live industrial applications recorded in PostgreSQL database.</p>
+              </div>
+
+              <div className="card-controls mb-4">
+                <div className="table-search-input">
+                  <IconSearch size={14} />
+                  <input
+                    type="text"
+                    placeholder="Search by name, sector..."
+                    value={tableSearch}
+                    onChange={(e) => setTableSearch(e.target.value)}
+                  />
+                </div>
+                <select
+                  className="table-filter-select"
+                  value={tableStatusFilter}
+                  onChange={(e) => setTableStatusFilter(e.target.value)}
+                >
+                  <option value="all">All Statuses</option>
+                  <option value="approved">Approved</option>
+                  <option value="in-progress">In Progress</option>
+                  <option value="action-required">Action Required</option>
+                  <option value="draft">Draft</option>
+                </select>
+              </div>
+
+              <div className="table-responsive">
+                <table className="gov-data-table">
+                  <thead>
+                    <tr>
+                      <th>Application ID</th>
+                      <th>Enterprise</th>
+                      <th>Sector</th>
+                      <th>Location</th>
+                      <th>Classification</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {loadingApplications ? (
+                      <tr>
+                        <td colSpan="7" className="table-empty-cell">
+                          <div className="table-spinner"></div>
+                          <span>Loading applications...</span>
+                        </td>
+                      </tr>
+                    ) : filteredApplications.length === 0 ? (
+                      <tr>
+                        <td colSpan="7" className="table-empty-cell">
+                          <IconInfo size={20} />
+                          <p>No applications match your search criteria.</p>
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredApplications.map((app) => {
+                        const status = app.status || "Draft";
+                        const lower = status.toLowerCase();
+                        let badgeClass = "badge-pending";
+                        if (lower === "approved") badgeClass = "badge-completed";
+                        else if (lower === "in progress" || lower === "in review" || lower === "under review")
+                          badgeClass = "badge-progress";
+                        else if (lower === "action required" || lower === "rejected")
+                          badgeClass = "badge-danger";
+
+                        return (
+                          <tr key={app.application_id}>
+                            <td>
+                              <span className="app-code">
+                                APP-{String(app.application_id).padStart(4, "0")}
+                              </span>
+                            </td>
+                            <td>
+                              <strong>{app.business_name}</strong>
+                            </td>
+                            <td>{app.industry}</td>
+                            <td>📍 {app.location}</td>
+                            <td>{app.business_type}</td>
+                            <td>
+                              <span className={`status-pill ${badgeClass}`}>
+                                {status}
+                              </span>
+                            </td>
+                            <td>
+                              <button
+                                type="button"
+                                className="table-action-btn"
+                                onClick={() => openRoadmap(app)}
+                              >
+                                <span>Roadmap</span>
+                                <IconArrowRight size={14} />
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* ===================================================================
+              VIEW: ROADMAP (IF ACCESSED DIRECTLY FROM SIDEBAR WITHOUT PARAMS)
+             =================================================================== */}
+          {activeView === "roadmap" && (
+            <div className="module-view-container">
+              <div className="module-header-banner">
+                <h2>Approval Roadmap</h2>
+                <p>Select an application to view its statutory approval journey.</p>
+              </div>
+
+              {applications.length > 0 ? (
+                <div className="roadmap-select-list">
+                  {applications.map((app) => (
+                    <div
+                      key={app.application_id}
+                      className="app-select-card cursor-pointer"
+                      onClick={() => openRoadmap(app)}
+                    >
+                      <div>
+                        <h3>{app.business_name}</h3>
+                        <p>{app.industry} · 📍 {app.location}</p>
+                      </div>
+                      <button type="button" className="btn-secondary">
+                        Open Roadmap →
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="empty-state-box">
+                  <IconInfo size={24} />
+                  <h3>No Applications Available</h3>
+                  <p>Start your first application to generate a roadmap.</p>
+                  <button
+                    type="button"
+                    className="btn-primary mt-3"
+                    onClick={() => setShowApplication(true)}
+                  >
+                    Start New Application
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ===================================================================
+              VIEW: AI ASSISTANT (CLEAN PROTOTYPE)
+             =================================================================== */}
           {activeView === "ai-assistant" && (
             <div className="module-view-container">
               <div className="module-header-banner">
-                <div className="module-tag prototype">PROTOTYPE PREVIEW · UI DEMONSTRATION</div>
-                <h2>AI Industrial Assistant & Regulatory Guide</h2>
-                <p>
-                  Interactive simulated advisor trained on Maharashtra industrial policies, MPCB pollution categories,
-                  and MAITRI inter-departmental approval rules.
-                </p>
+                <div className="module-tag prototype">PROTOTYPE PREVIEW</div>
+                <h2>AI Assistant</h2>
+                <p>Ask questions regarding Maharashtra industrial approvals, MPCB categories, and policies.</p>
               </div>
 
               <div className="ai-chat-layout">
@@ -921,214 +924,94 @@ function BusinessDashboard({ onLogout, onNavigateHome }) {
                     <div className="chat-bubble bot">
                       <div className="bubble-avatar"><IconBot size={16} /></div>
                       <div className="bubble-body">
-                        <strong>Namaskar! I am UdyogFlow's AI Industrial Guide.</strong>
-                        <p>
-                          I can assist you with statutory clearance requirements in Maharashtra, identify whether your industry
-                          falls into MPCB Red, Orange, Green, or White category, explain PSI 2019 fiscal incentives, and recommend
-                          approval sequencing. How can I guide your industrial enterprise today?
-                        </p>
+                        <strong>Namaskar! How can I help you today?</strong>
+                        <p>Ask about MPCB pollution categories, DISH factory licensing, or Maharashtra PSI 2019 incentives.</p>
                       </div>
                     </div>
 
                     <div className="chat-bubble user">
                       <div className="bubble-body">
-                        <p>What environmental approvals are needed for an Engineering unit in Chakan, Pune?</p>
+                        <p>What approvals are needed for an Engineering unit in Pune?</p>
                       </div>
                     </div>
 
                     <div className="chat-bubble bot">
                       <div className="bubble-avatar"><IconBot size={16} /></div>
                       <div className="bubble-body">
-                        <strong>MAITRI Assessment for Engineering in Pune (Chakan MIDC):</strong>
+                        <strong>Engineering in Pune typically requires:</strong>
                         <ul className="chat-list">
-                          <li><strong>MPCB Consent:</strong> Engineering units typically fall under the <em>Orange Category</em> (or Green if dry fabrication). You must apply for <strong>Consent to Establish (CTE)</strong> before commencing civil works.</li>
-                          <li><strong>DISH Clearance:</strong> Factory Plan Approval under Maharashtra Factories Rules 1963 from the Directorate of Industrial Safety and Health.</li>
-                          <li><strong>MIDC Water & Drainage:</strong> Chakan Industrial Area requires MIDC water allotment and CETP connection clearance.</li>
-                          <li><strong>Statutory SLA:</strong> CTE standard statutory SLA is 45 days under Maharashtra Right to Services Act.</li>
+                          <li>MPCB Consent to Establish (Orange/Green category)</li>
+                          <li>DISH Factory Plan Approval (Factories Act 1948)</li>
+                          <li>MIDC Land Allotment and Water Connection</li>
                         </ul>
                       </div>
                     </div>
                   </div>
 
-                  <div className="chat-suggestions">
-                    <span className="sugg-label">Sample Questions:</span>
-                    <button type="button" className="sugg-chip">What is PSI 2019 subsidy for Vidarbha?</button>
-                    <button type="button" className="sugg-chip">How to get DISH Factory License?</button>
-                    <button type="button" className="sugg-chip">What documents are needed for Land 7/12?</button>
-                  </div>
-
                   <div className="chat-input-row">
                     <input
                       type="text"
-                      placeholder="Ask about Maharashtra industrial clearances, subsidies, or compliance rules..."
-                      defaultValue=""
+                      placeholder="Type your question here..."
                     />
-                    <button type="button" className="btn-chat-send">Ask Assistant →</button>
+                    <button type="button" className="btn-chat-send">Send →</button>
                   </div>
                 </div>
 
                 <div className="ai-info-sidebar">
-                  <h3>Maharashtra Industrial Knowledge Graph</h3>
+                  <h3>Quick Guidelines</h3>
                   <div className="kg-item">
-                    <strong>MPCB Pollution Matrix</strong>
-                    <p>63 Red, 83 Orange, 63 Green, 36 White categories indexed.</p>
+                    <strong>MPCB Clearances</strong>
+                    <p>Pollution categorized into Red, Orange, Green, and White.</p>
                   </div>
                   <div className="kg-item">
-                    <strong>Inter-departmental SLA Standards</strong>
-                    <p>Synchronized with Maharashtra Right to Public Services Act 2015.</p>
-                  </div>
-                  <div className="kg-item">
-                    <strong>Package Scheme of Incentives 2019</strong>
-                    <p>Zone A, B, C, D, D+ and No Industry District (NID) grading support.</p>
+                    <strong>Statutory SLAs</strong>
+                    <p>Protected under Maharashtra Right to Public Services Act.</p>
                   </div>
                 </div>
               </div>
             </div>
           )}
 
-          {/* =====================================================================
-              VIEW: DOCUMENT PRE-VALIDATION (PROTOTYPE MODULE)
-             ===================================================================== */}
-          {activeView === "pre-validation" && (
+          {/* ===================================================================
+              VIEW: DOCUMENTS (CLEAN PROTOTYPE)
+             =================================================================== */}
+          {activeView === "documents" && (
             <div className="module-view-container">
               <div className="module-header-banner">
-                <div className="module-tag prototype">PROTOTYPE PREVIEW · UI DEMONSTRATION</div>
-                <h2>Automated Document Pre-Validation Engine</h2>
-                <p>
-                  Evaluates mandatory industrial dossiers prior to departmental submission. Verifies PDF resolutions,
-                  digital signatures, valid expiry dates, and government registration stamps.
-                </p>
-              </div>
-
-              <div className="preval-grid">
-                <div className="preval-upload-card">
-                  <div className="upload-dropzone">
-                    <IconFileCheck size={40} className="drop-icon" />
-                    <h3>Drop Industrial Document Here</h3>
-                    <p>Supports Land 7/12 Extract, Factory Layout, Environmental Audit, Partnership Deed (PDF/TIFF up to 25MB)</p>
-                    <button type="button" className="btn-browse-docs">Browse Files</button>
-                  </div>
-
-                  <div className="doc-verification-checklist">
-                    <h4>Pre-Submission Automated Checkpoints</h4>
-                    <div className="check-item passed">
-                      <IconCheck size={16} />
-                      <span>Optical Character Recognition (OCR) Text Legibility (min 300 DPI)</span>
-                    </div>
-                    <div className="check-item passed">
-                      <IconCheck size={16} />
-                      <span>Class 3 Digital Signature Certificate (DSC) Integrity</span>
-                    </div>
-                    <div className="check-item passed">
-                      <IconCheck size={16} />
-                      <span>Land Mutation Stamp Verification against Mahabhulekh Database</span>
-                    </div>
-                    <div className="check-item passed">
-                      <IconCheck size={16} />
-                      <span>Architect / Structural Engineer Licensing Stamp</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="preval-results-card">
-                  <h3>Recent Document Validation Audit</h3>
-                  <div className="doc-audit-item valid">
-                    <div className="audit-icon">📄</div>
-                    <div className="audit-meta">
-                      <strong>Factory Layout Plan_Chakan_Rev3.pdf</strong>
-                      <small>DISH & Fire Compliance · Validated Today</small>
-                    </div>
-                    <span className="audit-badge ready">100% Submission Ready</span>
-                  </div>
-
-                  <div className="doc-audit-item valid">
-                    <div className="audit-icon">📜</div>
-                    <div className="audit-meta">
-                      <strong>Maharashtra_7_12_Extract_Gat_204.pdf</strong>
-                      <small>Revenue Dept Verified · Timestamped</small>
-                    </div>
-                    <span className="audit-badge ready">Verified Authenticated</span>
-                  </div>
-
-                  <div className="doc-audit-item alert">
-                    <div className="audit-icon">⚠️</div>
-                    <div className="audit-meta">
-                      <strong>Power_Load_Sanction_MSEDCL.pdf</strong>
-                      <small>Resolution below 200 DPI · Signature blurry</small>
-                    </div>
-                    <span className="audit-badge warning">Re-Scan Recommended</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* =====================================================================
-              VIEW: SECURE DOCUMENT REUSE (PROTOTYPE MODULE)
-             ===================================================================== */}
-          {activeView === "document-reuse" && (
-            <div className="module-view-container">
-              <div className="module-header-banner">
-                <div className="module-tag prototype">PROTOTYPE PREVIEW · UI DEMONSTRATION</div>
-                <h2>Secure Document Reuse & Enterprise Vault</h2>
-                <p>
-                  Eliminates duplicate submissions across departments. Verified documents stored in your UdyogFlow Vault
-                  are linked across MPCB, MIDC, DISH, and Labor departments via DigiLocker.
-                </p>
+                <div className="module-tag prototype">PROTOTYPE PREVIEW</div>
+                <h2>Documents</h2>
+                <p>Pre-validate mandatory documents and reuse verified certificates across departments.</p>
               </div>
 
               <div className="vault-grid">
                 <div className="vault-doc-card">
                   <div className="vault-doc-header">
-                    <span className="vault-type">ENTITY KYC</span>
+                    <span className="vault-type">KYC</span>
                     <span className="vault-reused">Reused 4 Times</span>
                   </div>
                   <h3>Company Incorporation (MCA Certificate)</h3>
                   <p>CIN: U29304MH2024PTC128492</p>
-                  <div className="vault-departments">
-                    <span>MPCB</span>
-                    <span>MIDC</span>
-                    <span>DISH</span>
-                    <span>Commercial Tax</span>
-                  </div>
-                  <div className="vault-footer">
-                    <span className="vault-status">🔒 DigiLocker Authenticated</span>
-                  </div>
+                  <span className="vault-status">🔒 DigiLocker Verified</span>
                 </div>
 
                 <div className="vault-doc-card">
                   <div className="vault-doc-header">
-                    <span className="vault-type">STATUTORY REGISTRATION</span>
+                    <span className="vault-type">MSME</span>
                     <span className="vault-reused">Reused 3 Times</span>
                   </div>
                   <h3>Udyam Registration Certificate</h3>
                   <p>UDYAM-MH-26-0049281</p>
-                  <div className="vault-departments">
-                    <span>Industries Directorate</span>
-                    <span>MIDC</span>
-                    <span>Power Subsidy</span>
-                  </div>
-                  <div className="vault-footer">
-                    <span className="vault-status">🔒 MSME Verified</span>
-                  </div>
+                  <span className="vault-status">🔒 MSME Verified</span>
                 </div>
 
                 <div className="vault-doc-card">
                   <div className="vault-doc-header">
-                    <span className="vault-type">LAND & TITLE</span>
+                    <span className="vault-type">LAND TITLE</span>
                     <span className="vault-reused">Reused 5 Times</span>
                   </div>
-                  <h3>MIDC Land Allotment Order & Agreement</h3>
+                  <h3>MIDC Land Allotment Order</h3>
                   <p>MIDC/RO/PN/PLOT-E-42</p>
-                  <div className="vault-departments">
-                    <span>MPCB</span>
-                    <span>Fire NOC</span>
-                    <span>Building Permission</span>
-                    <span>Revenue</span>
-                  </div>
-                  <div className="vault-footer">
-                    <span className="vault-status">🔒 Maha-Bhumi Verified</span>
-                  </div>
+                  <span className="vault-status">🔒 Maha-Bhumi Verified</span>
                 </div>
 
                 <div className="vault-doc-card">
@@ -1138,97 +1021,84 @@ function BusinessDashboard({ onLogout, onNavigateHome }) {
                   </div>
                   <h3>MPCB Baseline Environmental Audit</h3>
                   <p>MPCB/RO-PUNE/CONSENT-00284</p>
-                  <div className="vault-departments">
-                    <span>MPCB</span>
-                    <span>Factory Inspectorate</span>
-                  </div>
-                  <div className="vault-footer">
-                    <span className="vault-status">🔒 MPCB Verified</span>
-                  </div>
+                  <span className="vault-status">🔒 MPCB Verified</span>
                 </div>
               </div>
             </div>
           )}
 
-          {/* =====================================================================
-              VIEW: DELAY PREDICTION (PROTOTYPE MODULE)
-             ===================================================================== */}
-          {activeView === "delay-prediction" && (
+          {/* ===================================================================
+              VIEW: DELAY ALERTS (CLEAN PROTOTYPE)
+             =================================================================== */}
+          {activeView === "delay-alerts" && (
             <div className="module-view-container">
               <div className="module-header-banner">
-                <div className="module-tag prototype">PROTOTYPE PREVIEW · UI DEMONSTRATION</div>
-                <h2>AI Delay Prediction & Inter-Departmental SLA Radar</h2>
-                <p>
-                  Empirical machine learning models calculating queue times across Maharashtra's 36 district offices.
-                  Identifies bottlenecks before they cause operational stagnation.
-                </p>
+                <div className="module-tag prototype">PROTOTYPE PREVIEW</div>
+                <h2>Delay Alerts</h2>
+                <p>Monitor department turnaround times against statutory SLAs to avoid delays.</p>
               </div>
 
               <div className="radar-grid">
                 <div className="radar-metric-card">
-                  <span className="radar-eyebrow">DEPARTMENTAL PERFORMANCE</span>
+                  <span className="radar-eyebrow">DEPARTMENT MONITORING</span>
                   <h3>Maharashtra Pollution Control Board (MPCB)</h3>
                   <div className="radar-stat-line">
-                    <span>Statutory SLA: <strong>45 Days</strong></span>
-                    <span>Current Avg Turnaround: <strong>49 Days</strong></span>
+                    <span>SLA: <strong>45 Days</strong></span>
+                    <span>Average: <strong>49 Days</strong></span>
                   </div>
                   <div className="sla-progress-bar">
                     <div className="sla-fill warning" style={{ width: "88%" }}></div>
                   </div>
                   <span className="radar-alert-note text-amber">
-                    ⚠️ Moderate delay risk due to seasonal site inspection backlog in Western Maharashtra.
+                    ⚠️ Site inspection backlog in Western Maharashtra. Ensure effluent diagrams are uploaded.
                   </span>
                 </div>
 
                 <div className="radar-metric-card">
-                  <span className="radar-eyebrow">DEPARTMENTAL PERFORMANCE</span>
-                  <h3>MIDC Water & Infrastructure Clearances</h3>
+                  <span className="radar-eyebrow">DEPARTMENT MONITORING</span>
+                  <h3>MIDC Infrastructure Clearances</h3>
                   <div className="radar-stat-line">
-                    <span>Statutory SLA: <strong>21 Days</strong></span>
-                    <span>Current Avg Turnaround: <strong>14 Days</strong></span>
+                    <span>SLA: <strong>21 Days</strong></span>
+                    <span>Average: <strong>14 Days</strong></span>
                   </div>
                   <div className="sla-progress-bar">
                     <div className="sla-fill success" style={{ width: "66%" }}></div>
                   </div>
                   <span className="radar-alert-note text-green">
-                    ✅ Optimal performance. Automated pipeline operating 7 days ahead of statutory deadline.
+                    ✅ Optimal performance. Processing 7 days ahead of statutory deadline.
                   </span>
                 </div>
 
                 <div className="radar-metric-card">
-                  <span className="radar-eyebrow">DEPARTMENTAL PERFORMANCE</span>
-                  <h3>Directorate of Industrial Safety & Health (DISH)</h3>
+                  <span className="radar-eyebrow">DEPARTMENT MONITORING</span>
+                  <h3>Directorate of Industrial Safety (DISH)</h3>
                   <div className="radar-stat-line">
-                    <span>Statutory SLA: <strong>30 Days</strong></span>
-                    <span>Current Avg Turnaround: <strong>28 Days</strong></span>
+                    <span>SLA: <strong>30 Days</strong></span>
+                    <span>Average: <strong>28 Days</strong></span>
                   </div>
                   <div className="sla-progress-bar">
                     <div className="sla-fill success" style={{ width: "93%" }}></div>
                   </div>
                   <span className="radar-alert-note text-blue">
-                    ℹ️ On track. Pre-submission drawings match standard industrial templates.
+                    ℹ️ On track. Standard factory layout submitted.
                   </span>
                 </div>
               </div>
             </div>
           )}
 
-          {/* =====================================================================
-              VIEW: COMPLIANCE & RENEWALS (PROTOTYPE MODULE)
-             ===================================================================== */}
+          {/* ===================================================================
+              VIEW: COMPLIANCE (CLEAN PROTOTYPE)
+             =================================================================== */}
           {activeView === "compliance" && (
             <div className="module-view-container">
               <div className="module-header-banner">
-                <div className="module-tag prototype">PROTOTYPE PREVIEW · UI DEMONSTRATION</div>
-                <h2>Statutory Compliance Calendar & Annual Renewals</h2>
-                <p>
-                  Proactive regulatory oversight preventing business interruptions and legal penalties
-                  under Maharashtra factory, environmental, and labor mandates.
-                </p>
+                <div className="module-tag prototype">PROTOTYPE PREVIEW</div>
+                <h2>Compliance Calendar</h2>
+                <p>Track upcoming statutory renewal deadlines and environmental returns.</p>
               </div>
 
               <div className="compliance-timeline-card">
-                <h3>Upcoming Regulatory Deadlines (FY 2026-27)</h3>
                 <div className="comp-item urgent">
                   <div className="comp-date">
                     <strong>31</strong>
@@ -1236,9 +1106,9 @@ function BusinessDashboard({ onLogout, onNavigateHome }) {
                   </div>
                   <div className="comp-body">
                     <strong>MPCB Annual Environmental Statement (Form V)</strong>
-                    <p>Mandatory for all Red and Orange category industries under Environment (Protection) Rules.</p>
+                    <p>Mandatory for Red and Orange category industries.</p>
                   </div>
-                  <span className="comp-badge due">Due in 10 Days</span>
+                  <span className="comp-badge due">Due Soon</span>
                 </div>
 
                 <div className="comp-item normal">
@@ -1247,8 +1117,8 @@ function BusinessDashboard({ onLogout, onNavigateHome }) {
                     <span>APR</span>
                   </div>
                   <div className="comp-body">
-                    <strong>Factory License Renewal under Factories Act 1948</strong>
-                    <p>Annual renewal fee submission via GRAS portal for Maharashtra Directorate of Industrial Safety.</p>
+                    <strong>Factory License Renewal</strong>
+                    <p>Annual renewal under Maharashtra Factories Rules.</p>
                   </div>
                   <span className="comp-badge queued">Upcoming</span>
                 </div>
@@ -1259,8 +1129,8 @@ function BusinessDashboard({ onLogout, onNavigateHome }) {
                     <span>JUN</span>
                   </div>
                   <div className="comp-body">
-                    <strong>Annual Fire Safety Audit Report (Form B)</strong>
-                    <p>Periodic safety certificate from licensed agency submitted to Maharashtra Fire Services.</p>
+                    <strong>Annual Fire Safety Audit Report</strong>
+                    <p>Form B submission to Maharashtra Fire Services.</p>
                   </div>
                   <span className="comp-badge queued">Scheduled</span>
                 </div>
@@ -1268,71 +1138,64 @@ function BusinessDashboard({ onLogout, onNavigateHome }) {
             </div>
           )}
 
-          {/* =====================================================================
-              VIEW: GOVERNMENT SCHEMES & PSI (PROTOTYPE MODULE)
-             ===================================================================== */}
+          {/* ===================================================================
+              VIEW: GOVERNMENT SCHEMES (CLEAN PROTOTYPE)
+             =================================================================== */}
           {activeView === "schemes" && (
             <div className="module-view-container">
               <div className="module-header-banner">
-                <div className="module-tag prototype">PROTOTYPE PREVIEW · UI DEMONSTRATION</div>
-                <h2>Maharashtra Government Schemes & Incentives (PSI 2019)</h2>
-                <p>
-                  Discover eligible state fiscal subsidies, power tariff discounts, stamp duty exemptions,
-                  and capital grants under the Maharashtra Industrial Policy.
-                </p>
+                <div className="module-tag prototype">PROTOTYPE PREVIEW</div>
+                <h2>Government Schemes & Incentives</h2>
+                <p>Explore fiscal incentives and subsidies under the Maharashtra Industrial Policy.</p>
               </div>
 
               <div className="schemes-grid">
                 <div className="scheme-card highlighted">
-                  <div className="scheme-badge">FLAGSHIP POLICY</div>
+                  <div className="scheme-badge">FLAGSHIP</div>
                   <h3>Package Scheme of Incentives (PSI 2019)</h3>
-                  <p>Incentivizes industrial dispersal to developing areas (Taluka Categories B, C, D, D+).</p>
+                  <p>Incentives for industrial dispersal into developing talukas (B, C, D, D+).</p>
                   <ul className="scheme-benefits">
-                    <li>Industrial Promotion Subsidy (IPS) up to 100% of Fixed Capital Investment</li>
-                    <li>Interest Subsidy: 5% on term loan for MSMEs</li>
-                    <li>Electricity Duty Exemption for up to 10 years</li>
-                    <li>100% Stamp Duty Exemption for land acquisition</li>
+                    <li>Industrial Promotion Subsidy up to 100% of Fixed Capital Investment</li>
+                    <li>5% Interest Subsidy on term loans for MSMEs</li>
+                    <li>Electricity duty exemption for up to 10 years</li>
                   </ul>
-                  <button type="button" className="btn-scheme-apply">Check Enterprise Eligibility →</button>
+                  <button type="button" className="btn-scheme-apply">Check Eligibility →</button>
                 </div>
 
                 <div className="scheme-card">
                   <div className="scheme-badge">INNOVATION</div>
-                  <h3>Maharashtra State Innovation Society Startup Grant</h3>
-                  <p>Financial support up to ₹15 Lakhs for innovative product patents and prototype testing.</p>
+                  <h3>MSInS Startup Patent Subsidy</h3>
+                  <p>Financial support up to ₹15 Lakhs for patents and quality certifications.</p>
                   <ul className="scheme-benefits">
                     <li>Patent filing reimbursement up to ₹2 Lakhs</li>
-                    <li>Quality certification fee subsidy</li>
+                    <li>Quality testing fee reimbursement</li>
                   </ul>
-                  <button type="button" className="btn-scheme-apply secondary">View Guidelines →</button>
+                  <button type="button" className="btn-scheme-apply secondary">View Details →</button>
                 </div>
 
                 <div className="scheme-card">
                   <div className="scheme-badge">GREEN ENERGY</div>
-                  <h3>Clean Energy Industrial Transition Rebate</h3>
-                  <p>Subsidies for rooftop solar installation and zero-liquid-discharge (ZLD) effluent plants.</p>
+                  <h3>Clean Energy Industrial Transition</h3>
+                  <p>Subsidies for rooftop solar installation and effluent treatment.</p>
                   <ul className="scheme-benefits">
-                    <li>Capital grant of 25% on effluent treatment equipment</li>
-                    <li>Priority net-metering approval by MSEDCL</li>
+                    <li>25% capital subsidy on effluent treatment equipment</li>
+                    <li>Priority net-metering approval</li>
                   </ul>
-                  <button type="button" className="btn-scheme-apply secondary">View Guidelines →</button>
+                  <button type="button" className="btn-scheme-apply secondary">View Details →</button>
                 </div>
               </div>
             </div>
           )}
 
-          {/* =====================================================================
-              VIEW: ALERTS & NOTIFICATIONS (PROTOTYPE MODULE)
-             ===================================================================== */}
-          {activeView === "alerts" && (
+          {/* ===================================================================
+              VIEW: NOTIFICATIONS (CLEAN PROTOTYPE)
+             =================================================================== */}
+          {activeView === "notifications" && (
             <div className="module-view-container">
               <div className="module-header-banner">
-                <div className="module-tag prototype">PROTOTYPE PREVIEW · UI DEMONSTRATION</div>
-                <h2>Government Alerts, Notifications & Circulars</h2>
-                <p>
-                  Official communiques issued by Department of Industries, Maharashtra Pollution Control Board,
-                  and MAITRI Single Window Nodal Officers.
-                </p>
+                <div className="module-tag prototype">PROTOTYPE PREVIEW</div>
+                <h2>Notifications & Circulars</h2>
+                <p>Official alerts issued by the Department of Industries and MAITRI.</p>
               </div>
 
               <div className="alerts-full-list">
@@ -1340,13 +1203,10 @@ function BusinessDashboard({ onLogout, onNavigateHome }) {
                   <div className="alert-left-icon">⚠️</div>
                   <div className="alert-content">
                     <div className="alert-title-row">
-                      <strong>MPCB Circular: Mandatory Online Water Quality Monitoring Submission</strong>
-                      <span className="alert-time">2 hours ago</span>
+                      <strong>MPCB Circular: Online Effluent Sensor Data</strong>
+                      <span className="alert-time">Today</span>
                     </div>
-                    <p>
-                      All units operating with effluent generation exceeding 50 KLD must connect real-time sensor
-                      data to the central MPCB server by March 31, 2026.
-                    </p>
+                    <p>Units generating over 50 KLD effluent must connect sensors by March 31, 2026.</p>
                   </div>
                 </div>
 
@@ -1354,13 +1214,10 @@ function BusinessDashboard({ onLogout, onNavigateHome }) {
                   <div className="alert-left-icon">📢</div>
                   <div className="alert-content">
                     <div className="alert-title-row">
-                      <strong>MAITRI Single Window Portal Maintenance Scheduled</strong>
+                      <strong>MAITRI Scheduled Maintenance Notice</strong>
                       <span className="alert-time">Yesterday</span>
                     </div>
-                    <p>
-                      Scheduled database optimization on Sunday 02:00 AM to 04:00 AM IST. Application filings will
-                      be queued and processed seamlessly post-maintenance.
-                    </p>
+                    <p>Database optimization on Sunday 02:00 AM to 04:00 AM IST.</p>
                   </div>
                 </div>
 
@@ -1368,37 +1225,83 @@ function BusinessDashboard({ onLogout, onNavigateHome }) {
                   <div className="alert-left-icon">✅</div>
                   <div className="alert-content">
                     <div className="alert-title-row">
-                      <strong>New Industrial Sub-Station Energized at Chakan Phase II</strong>
+                      <strong>Chakan Phase II Substation Energized</strong>
                       <span className="alert-time">3 days ago</span>
                     </div>
-                    <p>
-                      MSEDCL has commissioned a new 220/33kV substation. Power load feasibility applications for Chakan
-                      industrial plots will now be processed with a reduced SLA of 3 days.
-                    </p>
+                    <p>Power load feasibility turnaround time reduced to 3 days for Chakan plots.</p>
                   </div>
                 </div>
               </div>
             </div>
           )}
 
-          {/* =====================================================================
-              PORTAL FOOTER
-             ===================================================================== */}
-          <footer className="portal-footer">
-            <div className="footer-left">
-              <span className="footer-copy">
-                © 2026 Government of Maharashtra. All rights reserved.
-              </span>
-              <span className="footer-sub">
-                Designed & developed for the Department of Industries · Integrated with MAITRI Single Window Clearances.
-              </span>
+          {/* ===================================================================
+              VIEW: PROFILE (CLEAN USER SETTINGS)
+             =================================================================== */}
+          {activeView === "profile" && (
+            <div className="module-view-container">
+              <div className="module-header-banner">
+                <h2>Investor Profile</h2>
+                <p>Your registered business profile under Government of Maharashtra Single Window.</p>
+              </div>
+
+              <div className="profile-details-card">
+                <div className="profile-header-row">
+                  <div className="profile-avatar-big">B</div>
+                  <div>
+                    <h3>Business Investor</h3>
+                    <span>Industrial Unit Account · Verified</span>
+                  </div>
+                </div>
+
+                <div className="profile-info-grid">
+                  <div className="profile-field">
+                    <label>Account Type</label>
+                    <strong>Business Investor (MAITRI Single Window)</strong>
+                  </div>
+                  <div className="profile-field">
+                    <label>Email Address</label>
+                    <strong>investor@udyogflow.gov.in</strong>
+                  </div>
+                  <div className="profile-field">
+                    <label>Jurisdiction</label>
+                    <strong>State of Maharashtra (All 36 Districts)</strong>
+                  </div>
+                  <div className="profile-field">
+                    <label>Registered Submissions</label>
+                    <strong>{applications.length} Applications on File</strong>
+                  </div>
+                </div>
+
+                <div className="profile-actions-row">
+                  <button
+                    type="button"
+                    className="btn-secondary"
+                    onClick={() => alert("Profile update form will open in account management.")}
+                  >
+                    Edit Profile
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-secondary"
+                    onClick={() => alert("Password reset link will be sent to your email.")}
+                  >
+                    Change Password
+                  </button>
+                </div>
+              </div>
             </div>
+          )}
+
+          {/* Clean Footer */}
+          <footer className="portal-footer">
+            <span className="footer-copy">
+              © 2026 Government of Maharashtra · UdyogFlow Platform
+            </span>
             <div className="footer-links">
-              <a href="#home">Home</a>
-              <a href="#maitri">MAITRI Guidelines</a>
-              <a href="#rti">Right to Information</a>
-              <a href="#terms">Terms of Service</a>
-              <a href="#help">Helpdesk</a>
+              <a href="#maitri" onClick={(e) => { e.preventDefault(); setActiveView("dashboard"); }}>Dashboard</a>
+              <a href="#help" onClick={(e) => { e.preventDefault(); setActiveView("ai-assistant"); }}>AI Assistant</a>
+              <a href="#notif" onClick={(e) => { e.preventDefault(); setActiveView("notifications"); }}>Notifications</a>
             </div>
           </footer>
         </main>

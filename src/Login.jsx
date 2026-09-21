@@ -1,29 +1,37 @@
 import { useState } from "react";
 import BusinessDashboard from "./BusinessDashboard";
 import maharashtraLogo from "./assets/maharashtra-logo.png";
-import { IconArrowLeft, IconLock, IconShieldCheck, IconUser, IconBuilding, IconCheck } from "./Icons";
+import { IconArrowLeft, IconShieldCheck, IconUser, IconBuilding, IconCheck } from "./Icons";
 
-function Login({ onBack }) {
+function Login({ onBack, onNavigateRegister, onLoginSuccess }) {
   const [role, setRole] = useState("business");
   const [loggedIn, setLoggedIn] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState("investor@udyogflow.gov.in");
-  const [password, setPassword] = useState("••••••••");
+  // Requirement: Email and Password MUST be empty on load, no demo values!
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleLogin = (e) => {
     e.preventDefault();
 
     if (role === "business") {
       setLoggedIn(true);
+      if (onLoginSuccess) {
+        onLoginSuccess();
+      }
     } else {
-      alert("Government Officer / Department Nodal Desk authentication portal is currently accessible via Parichay Gov SSO in production.");
+      alert("Government Officer / Department Nodal Desk authentication is managed via official Parichay SSO.");
     }
   };
 
   if (loggedIn) {
     return (
       <BusinessDashboard
-        onLogout={() => setLoggedIn(false)}
+        onLogout={() => {
+          setLoggedIn(false);
+          setEmail("");
+          setPassword("");
+        }}
         onNavigateHome={onBack}
       />
     );
@@ -52,7 +60,7 @@ function Login({ onBack }) {
               onClick={onBack}
             >
               <IconArrowLeft size={16} />
-              <span>Back to Portal Home</span>
+              <span>Back to Home</span>
             </button>
           )}
         </div>
@@ -65,8 +73,8 @@ function Login({ onBack }) {
           <div className="login-card-head">
             <div className="udyog-logo-square">U</div>
             <div className="login-header-text">
-              <h2>UdyogFlow Single Sign-On</h2>
-              <span>Smart Industrial Approval & Compliance Gateway</span>
+              <h2>Sign In to UdyogFlow</h2>
+              <span>Industrial Approvals & Compliance Gateway</span>
             </div>
           </div>
 
@@ -79,8 +87,8 @@ function Login({ onBack }) {
             >
               <IconUser size={18} />
               <div className="role-btn-text">
-                <strong>Business Investor</strong>
-                <small>Industrial Units & MSMEs</small>
+                <strong>Business User</strong>
+                <small>Industrial Investors & Units</small>
               </div>
             </button>
 
@@ -92,7 +100,7 @@ function Login({ onBack }) {
               <IconBuilding size={18} />
               <div className="role-btn-text">
                 <strong>Government Officer</strong>
-                <small>MAITRI / Department Nodal Desk</small>
+                <small>Department Nodal Desk</small>
               </div>
             </button>
           </div>
@@ -100,13 +108,11 @@ function Login({ onBack }) {
           {/* Login Form */}
           <form className="gov-login-form" onSubmit={handleLogin}>
             <div className="form-group">
-              <label htmlFor="loginEmail">
-                {role === "business" ? "Registered Email / Udyam ID" : "Official Government Email (.gov.in / .nic.in)"}
-              </label>
+              <label htmlFor="loginEmail">Email Address</label>
               <input
                 id="loginEmail"
-                type="text"
-                placeholder={role === "business" ? "name@company.com or Udyam number" : "officer@maharashtra.gov.in"}
+                type="email"
+                placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -115,11 +121,11 @@ function Login({ onBack }) {
 
             <div className="form-group">
               <div className="label-with-link">
-                <label htmlFor="loginPassword">Access Password</label>
+                <label htmlFor="loginPassword">Password</label>
                 <button
                   type="button"
                   className="forgot-link"
-                  onClick={() => alert("Password reset OTP will be sent to your registered mobile linked to PAN / Aadhaar.")}
+                  onClick={() => alert("Password reset instructions will be sent to your registered email.")}
                 >
                   Forgot Password?
                 </button>
@@ -128,7 +134,7 @@ function Login({ onBack }) {
                 <input
                   id="loginPassword"
                   type={showPassword ? "text" : "password"}
-                  placeholder="Enter security password"
+                  placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -143,53 +149,33 @@ function Login({ onBack }) {
               </div>
             </div>
 
-            <div className="login-remember-row">
-              <label className="checkbox-label">
-                <input type="checkbox" defaultChecked />
-                <span>Keep session active on this workstation</span>
-              </label>
-              <span className="secure-badge">
-                <IconShieldCheck size={14} /> 2FA Ready
-              </span>
-            </div>
-
             <button type="submit" className="btn-login-submit">
-              <span>Sign In to {role === "business" ? "Investor Dashboard" : "Department Desk"}</span>
+              <span>Sign In</span>
               <IconCheck size={18} />
             </button>
           </form>
 
-          {/* Registration Prompt */}
-          {role === "business" ? (
-            <div className="login-footer-action">
-              <span>New enterprise setting up in Maharashtra?</span>
-              <button
-                type="button"
-                className="action-register-link"
-                onClick={() => {
-                  if (onBack) onBack();
-                }}
-              >
-                Start New Application →
-              </button>
-            </div>
-          ) : (
-            <div className="login-footer-action">
-              <small className="officer-notice">
-                Official access is audited by MahaIT under State Cyber Security Policy 2024.
-              </small>
-            </div>
-          )}
+          {/* Register Prompt */}
+          <div className="login-footer-action">
+            <span>Don't have an account?</span>
+            <button
+              type="button"
+              className="action-register-link"
+              onClick={onNavigateRegister}
+            >
+              Create Account →
+            </button>
+          </div>
 
-          {/* Trust Security Footer */}
+          {/* Security Notice */}
           <div className="login-security-notice">
-            <IconLock size={14} />
-            <span>256-Bit SSL Encrypted · Integrated with MAITRI Single Window Clearances</span>
+            <IconShieldCheck size={14} />
+            <span>Secure 256-Bit SSL Connection · MAITRI Integrated</span>
           </div>
         </div>
 
         <p className="login-bottom-credits">
-          © 2026 Government of Maharashtra. Department of Industries & MIDC.
+          © 2026 Government of Maharashtra. All rights reserved.
         </p>
       </div>
     </div>
