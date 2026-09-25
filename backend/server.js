@@ -209,7 +209,7 @@ app.post("/api/applications", async (req, res) => {
 
 
     // User ID is required
-    if (!userId) {
+    if (!userId || userId === "null" || userId === "undefined") {
       return res.status(400).json({
         message: "User ID is required"
       });
@@ -318,7 +318,7 @@ app.get("/api/applications", async (req, res) => {
 
     const userId = req.query.userId || req.query.user_id;
 
-    if (!userId) {
+    if (!userId || userId === "null" || userId === "undefined") {
       return res.status(400).json({
         message: "User ID is required"
       });
@@ -328,6 +328,7 @@ app.get("/api/applications", async (req, res) => {
       `SELECT *
        FROM applications
        WHERE user_id = $1
+         AND user_id IS NOT NULL
        ORDER BY created_at DESC`,
       [userId]
     );
@@ -356,10 +357,10 @@ app.get("/api/applications/:id", async (req, res) => {
   try {
 
     const { id } = req.params;
-    const { user_id } = req.query;
+    const userId = req.query.user_id || req.query.userId;
 
 
-    if (!user_id) {
+    if (!userId || userId === "null" || userId === "undefined") {
       return res.status(400).json({
         message: "User ID is required"
       });
@@ -370,8 +371,9 @@ app.get("/api/applications/:id", async (req, res) => {
       `SELECT *
        FROM applications
        WHERE application_id = $1
-       AND user_id = $2`,
-      [id, user_id]
+       AND user_id = $2
+       AND user_id IS NOT NULL`,
+      [id, userId]
     );
 
 
@@ -409,10 +411,10 @@ app.get("/api/applications/:id/approvals", async (req, res) => {
   try {
 
     const { id } = req.params;
-    const { user_id } = req.query;
+    const userId = req.query.user_id || req.query.userId;
 
 
-    if (!user_id) {
+    if (!userId || userId === "null" || userId === "undefined") {
       return res.status(400).json({
         message: "User ID is required"
       });
@@ -424,8 +426,9 @@ app.get("/api/applications/:id/approvals", async (req, res) => {
       `SELECT application_id
        FROM applications
        WHERE application_id = $1
-       AND user_id = $2`,
-      [id, user_id]
+       AND user_id = $2
+       AND user_id IS NOT NULL`,
+      [id, userId]
     );
 
 

@@ -54,7 +54,7 @@ const POPULAR_DISTRICTS = [
   "Palghar"
 ];
 
-function ApplicationSetup({ onGenerateRoadmap, onBack, userId }) {
+function ApplicationSetup({ onGenerateRoadmap, onBack, userId, onApplicationCreated }) {
   const [formData, setFormData] = useState({
     businessName: "",
     industry: "",
@@ -100,7 +100,7 @@ function ApplicationSetup({ onGenerateRoadmap, onBack, userId }) {
 
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:5000/api/applications", {
+      const response = await fetch("https://udyogflow.onrender.com/api/applications", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -119,11 +119,16 @@ function ApplicationSetup({ onGenerateRoadmap, onBack, userId }) {
 
       console.log("Application saved successfully:", data);
 
+      if (onApplicationCreated && data.application) {
+        onApplicationCreated(data.application);
+      }
+
       onGenerateRoadmap({
-  ...formData,
-  applicationId: data.application.application_id,
-  userId,
-});
+        ...formData,
+        applicationId: data.application.application_id,
+        userId,
+        application: data.application,
+      });
     } catch (error) {
       console.error("Error submitting application:", error);
       setErrorMessage(

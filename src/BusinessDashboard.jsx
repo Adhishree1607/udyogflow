@@ -698,32 +698,70 @@ function BusinessDashboard({ user, onLogout, onNavigateHome }) {
   const kpiRowRef = useRef(null);
 
   /* ----------------------------------------------------------
-     Fetch applications (existing — unmodified)
+     Fetch applications (live PostgreSQL, strict user isolation)
   ---------------------------------------------------------- */
-  useEffect(() => {
-    const fetchApplications = async () => {
-      try {
-        const response = await fetch(
-          `http://localhost:5000/api/applications?userId=${user?.user_id}`
-        );
-        if (!response.ok) throw new Error("Failed to fetch applications");
-        const data = await response.json();
-        setApplications(data);
-      } catch (error) {
-        console.error("Error fetching applications:", error);
-        setApplications([]);
-      } finally {
-        setLoadingApplications(false);
+  const fetchApplications = async (showLoading = false) => {
+    if (!user?.user_id) {
+      setApplications([]);
+      setLoadingApplications(false);
+      return;
+    }
+    try {
+      if (showLoading) {
+        setLoadingApplications(true);
       }
-    };
+      const response = await fetch(
+        `https://udyogflow.onrender.com/api/applications?userId=${user.user_id}`
+      );
+      if (!response.ok) throw new Error("Failed to fetch applications");
+      const data = await response.json();
+      const userApps = Array.isArray(data)
+        ? data.filter(
+            (app) =>
+              app &&
+              app.user_id != null &&
+              String(app.user_id) === String(user.user_id)
+          )
+        : [];
+      setApplications(userApps);
+    } catch (error) {
+      console.error("Error fetching applications:", error);
+      if (showLoading) {
+        setApplications([]);
+      }
+    } finally {
+      setLoadingApplications(false);
+    }
+  };
 
+  useEffect(() => {
     if (user?.user_id) {
-      fetchApplications();
+      fetchApplications(true);
     } else {
       setApplications([]);
       setLoadingApplications(false);
     }
-  }, [user]);
+  }, [user?.user_id]);
+
+  /* ----------------------------------------------------------
+     Handle newly created application (immediate update & sync)
+  ---------------------------------------------------------- */
+  const handleApplicationCreated = (newApplication) => {
+    if (!newApplication) return;
+    if (
+      newApplication.user_id != null &&
+      String(newApplication.user_id) === String(user?.user_id)
+    ) {
+      setApplications((prev) => {
+        const exists = prev.some(
+          (app) => app.application_id === newApplication.application_id
+        );
+        if (exists) return prev;
+        return [newApplication, ...prev];
+      });
+    }
+    fetchApplications(false);
+  };
 
   /* ----------------------------------------------------------
      Live clock (NEW)
@@ -961,14 +999,23 @@ function BusinessDashboard({ user, onLogout, onNavigateHome }) {
   const userEmail = getUserEmail(user);
 
   /* ----------------------------------------------------------
-     Sub-flow: New Application (existing — unmodified)
+     Sub-flow: New Application
   ---------------------------------------------------------- */
   if (showApplication) {
     return (
       <ApplicationSetup
         userId={user?.user_id}
-        onBack={() => setShowApplication(false)}
+        onBack={() => {
+          setShowApplication(false);
+          fetchApplications(false);
+        }}
+        onApplicationCreated={handleApplicationCreated}
         onGenerateRoadmap={(data) => {
+          if (data?.application) {
+            handleApplicationCreated(data.application);
+          } else {
+            fetchApplications(false);
+          }
           setApplicationData(data);
           setShowApplication(false);
           setShowRoadmap(true);
@@ -978,13 +1025,16 @@ function BusinessDashboard({ user, onLogout, onNavigateHome }) {
   }
 
   /* ----------------------------------------------------------
-     Sub-flow: Roadmap (existing — unmodified)
+     Sub-flow: Roadmap
   ---------------------------------------------------------- */
   if (showRoadmap) {
     return (
       <ApprovalRoadmap
         applicationData={applicationData}
-        onBack={() => setShowRoadmap(false)}
+        onBack={() => {
+          setShowRoadmap(false);
+          fetchApplications(false);
+        }}
       />
     );
   }

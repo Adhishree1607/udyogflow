@@ -29,7 +29,7 @@ function ApprovalRoadmap({ applicationData, onBack }) {
           return;
         }
 const response = await fetch(
-  `http://localhost:5000/api/applications/${applicationData.applicationId}/approvals?user_id=${applicationData.userId}`
+  `https://udyogflow.onrender.com/api/applications/${applicationData.applicationId}/approvals?user_id=${applicationData.userId}`
 );
 
         if (!response.ok) {
