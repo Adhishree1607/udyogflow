@@ -54,7 +54,7 @@ const POPULAR_DISTRICTS = [
   "Palghar"
 ];
 
-function ApplicationSetup({ onGenerateRoadmap, onBack }) {
+function ApplicationSetup({ onGenerateRoadmap, onBack, userId }) {
   const [formData, setFormData] = useState({
     businessName: "",
     industry: "",
@@ -105,7 +105,10 @@ function ApplicationSetup({ onGenerateRoadmap, onBack }) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+      body: JSON.stringify({
+  ...formData,
+  userId,
+}),
       });
 
       const data = await response.json();
@@ -117,9 +120,10 @@ function ApplicationSetup({ onGenerateRoadmap, onBack }) {
       console.log("Application saved successfully:", data);
 
       onGenerateRoadmap({
-        ...formData,
-        applicationId: data.application.application_id,
-      });
+  ...formData,
+  applicationId: data.application.application_id,
+  userId,
+});
     } catch (error) {
       console.error("Error submitting application:", error);
       setErrorMessage(
@@ -219,7 +223,7 @@ function ApplicationSetup({ onGenerateRoadmap, onBack }) {
             <h3>Proposed Industrial Enterprise Details</h3>
           </div>
 
-          <form className="application-form" onSubmit={handleSubmit}>
+          <form className="application-form" onSubmit={handleSubmit} autoComplete="off">
             {/* Business Name */}
             <div className="form-group">
               <label htmlFor="businessName">
@@ -234,6 +238,10 @@ function ApplicationSetup({ onGenerateRoadmap, onBack }) {
                 onChange={handleChange}
                 required
                 disabled={loading}
+                autoComplete="off"
+                autoCorrect="off"
+                autoCapitalize="off"
+                spellCheck="false"
               />
               <span className="field-hint">
                 Provide official legal name registered under MCA / Udyam / Partnership deed.
@@ -312,6 +320,7 @@ function ApplicationSetup({ onGenerateRoadmap, onBack }) {
                 onChange={handleChange}
                 required
                 disabled={loading}
+                autoComplete="off"
               />
               <div className="quick-chips-wrapper">
                 <span className="chip-label">Quick select major industrial hubs:</span>

@@ -193,17 +193,17 @@ function App() {
               <div className="hero-content-col">
                 <div className="hero-flagship-pill">
                   <IconShieldCheck size={16} />
-                  <span>MAITRI SINGLE WINDOW CLEARANCE PORTAL</span>
+                  <span>SMART INDUSTRIAL APPROVAL &amp; COMPLIANCE ASSISTANT</span>
                 </div>
 
                 <h1 className="hero-main-title">
-                  Industrial Approvals in Maharashtra,
-                  <span className="title-highlight"> Simplified.</span>
+                  UdyogFlow
+                  <span className="title-highlight"> — Built for Business.</span>
                 </h1>
 
                 {/* One simple explanation */}
                 <p className="hero-description">
-                  UdyogFlow provides businesses with a single guided roadmap to obtain clearances across MPCB, MIDC, DISH, and Fire departments with guaranteed statutory timelines.
+                  One platform to understand, manage and track the approvals required for setting up your business in Maharashtra.
                 </p>
 
                 <div className="hero-btn-row">
@@ -219,9 +219,9 @@ function App() {
                   <button
                     type="button"
                     className="btn-hero-secondary"
-                    onClick={() => setCurrentPage("about")}
+                    onClick={() => setCurrentPage("features")}
                   >
-                    <span>Learn How It Works</span>
+                    <span>Explore Features</span>
                   </button>
                 </div>
 
@@ -303,12 +303,12 @@ function App() {
             </div>
           </section>
 
-          {/* Short Feature Highlights (One sentence each) */}
+          {/* Concise Feature Highlights */}
           <section className="capabilities-section">
             <div className="section-head-center">
-              <span className="section-eyebrow">WHAT WE OFFER</span>
-              <h2>One Platform. Complete Clearance Support.</h2>
-              <p>Everything you need from setup to continuous compliance.</p>
+              <span className="section-eyebrow">CORE CAPABILITIES</span>
+              <h2>Comprehensive Clearance &amp; Compliance Platform</h2>
+              <p>Everything you need from initial setup to ongoing statutory compliance.</p>
             </div>
 
             <div className="capabilities-grid">
@@ -319,8 +319,8 @@ function App() {
                 <div className="cap-icon-box icon-navy">
                   <IconRoadmap size={22} />
                 </div>
-                <h3>Approval Roadmap</h3>
-                <p>Personalized step-by-step roadmap showing all required clearances.</p>
+                <h3>Personalized Approval Roadmap</h3>
+                <p>Custom sequenced checklist of all statutory clearances tailored to your industry, scale, and location.</p>
               </div>
 
               <div
@@ -331,7 +331,7 @@ function App() {
                   <IconBot size={22} />
                 </div>
                 <h3>AI Assistant</h3>
-                <p>Quick guidance on pollution categories, acts, and clearance procedures.</p>
+                <p>Guided answers on pollution categories, statutory timelines, required documents, and departments.</p>
               </div>
 
               <div
@@ -341,19 +341,8 @@ function App() {
                 <div className="cap-icon-box icon-green">
                   <IconFileCheck size={22} />
                 </div>
-                <h3>Documents</h3>
-                <p>Pre-validate document formats and signatures before filing.</p>
-              </div>
-
-              <div
-                className="cap-card cursor-pointer"
-                onClick={() => setCurrentPage("features")}
-              >
-                <div className="cap-icon-box icon-blue">
-                  <IconShieldCheck size={22} />
-                </div>
-                <h3>Secure Document Reuse</h3>
-                <p>Reuse verified certificates across departments without re-uploading.</p>
+                <h3>Document Pre-Validation</h3>
+                <p>Check document formats, readiness, and mandatory prerequisites before official department submission.</p>
               </div>
 
               <div
@@ -363,8 +352,8 @@ function App() {
                 <div className="cap-icon-box icon-amber">
                   <IconClockAlert size={22} />
                 </div>
-                <h3>Delay Alerts</h3>
-                <p>Early warnings on potential department bottlenecks to prevent delays.</p>
+                <h3>Delay Risk Alerts</h3>
+                <p>Proactive warnings and SLA tracking under Maharashtra Right to Public Services to prevent project delays.</p>
               </div>
 
               <div
@@ -374,8 +363,8 @@ function App() {
                 <div className="cap-icon-box icon-teal">
                   <IconRepeat size={22} />
                 </div>
-                <h3>Compliance</h3>
-                <p>Automated renewal reminders for factory licenses and returns.</p>
+                <h3>Compliance Intelligence</h3>
+                <p>Automated reminders and calendar for annual license renewals, safety audits, and environmental returns.</p>
               </div>
 
               <div
@@ -385,54 +374,49 @@ function App() {
                 <div className="cap-icon-box icon-orange">
                   <IconAward size={22} />
                 </div>
-                <h3>Government Schemes</h3>
-                <p>Discover eligible fiscal incentives under Package Scheme of Incentives (PSI 2019).</p>
-              </div>
-
-              <div
-                className="cap-card cursor-pointer"
-                onClick={() => setCurrentPage("features")}
-              >
-                <div className="cap-icon-box icon-red">
-                  <IconBell size={22} />
-                </div>
-                <h3>Notifications</h3>
-                <p>Instant alerts on scrutiny updates, approvals, and official circulars.</p>
+                <h3>Government Scheme Support</h3>
+                <p>Discover eligible fiscal incentives, subsidies, and power tariff exemptions under PSI 2019.</p>
               </div>
             </div>
           </section>
 
-          {/* 4 Steps Section */}
+          {/* 5-Step Visual Workflow Section */}
           <section className="workflow-section">
             <div className="section-head-center">
-              <span className="section-eyebrow">SIMPLE PROCESS</span>
-              <h2>How It Works</h2>
-              <p>Four easy steps to establish your industrial enterprise.</p>
+              <span className="section-eyebrow">HOW IT WORKS</span>
+              <h2>The End-to-End Approval Journey</h2>
+              <p>Five simple stages to establish and operate your industrial enterprise.</p>
             </div>
 
-            <div className="workflow-steps-container">
+            <div className="workflow-steps-container five-steps">
               <div className="wf-step-card">
                 <div className="wf-step-num">01</div>
-                <h3>Enter Business Details</h3>
-                <p>Tell us your industry sector, enterprise classification, and location.</p>
+                <h3>Business Details</h3>
+                <p>Enter enterprise sector, scale, and district location.</p>
               </div>
 
               <div className="wf-step-card">
                 <div className="wf-step-num">02</div>
-                <h3>Get Approval Roadmap</h3>
-                <p>The platform identifies the clearances, fees, and documents you need.</p>
+                <h3>Approval Identification</h3>
+                <p>Engine identifies mandatory clearances, fees, and departments.</p>
               </div>
 
               <div className="wf-step-card">
                 <div className="wf-step-num">03</div>
-                <h3>Submit & Track</h3>
-                <p>Upload documents once and monitor progress across all departments.</p>
+                <h3>Document Preparation</h3>
+                <p>Pre-validate file formats and compile required documentation.</p>
               </div>
 
               <div className="wf-step-card">
                 <div className="wf-step-num">04</div>
-                <h3>Maintain Compliance</h3>
-                <p>Receive timely alerts for annual renewals, inspections, and filings.</p>
+                <h3>Approval Roadmap</h3>
+                <p>Follow a sequenced clearance path with SLA timeline protection.</p>
+              </div>
+
+              <div className="wf-step-card">
+                <div className="wf-step-num">05</div>
+                <h3>Application Tracking</h3>
+                <p>Monitor live scrutiny stages across all nodal departments.</p>
               </div>
             </div>
           </section>

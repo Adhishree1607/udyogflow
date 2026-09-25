@@ -2,11 +2,11 @@ import {
   IconRoadmap,
   IconBot,
   IconFileCheck,
-  IconShieldCheck,
   IconClockAlert,
   IconRepeat,
   IconAward,
-  IconBell,
+  IconBuilding,
+  IconUser,
   IconArrowRight
 } from "./Icons";
 
@@ -14,51 +14,59 @@ function Features({ onGetStarted }) {
   const featuresList = [
     {
       icon: <IconRoadmap size={24} />,
-      title: "Smart Approval Roadmap",
-      desc: "Step-by-step clearance sequence tailored to your industry, location, and scale.",
+      title: "Approval Roadmap",
+      desc: "Personalized step-by-step clearance sequence tailored to your industry, location, and enterprise scale with statutory SLA milestones.",
+      tag: null,
       color: "blue"
     },
     {
       icon: <IconBot size={24} />,
       title: "AI Assistant",
-      desc: "Instant answers on Maharashtra industrial policies, MPCB pollution categories, and rules.",
+      desc: "Guided help for industrial approvals, documents, departments, timelines, and government schemes — rule-based prototype.",
+      tag: "Prototype",
       color: "purple"
     },
     {
       icon: <IconFileCheck size={24} />,
-      title: "Documents",
-      desc: "Pre-validates document formats, resolutions, and digital signatures before submission.",
+      title: "Document Pre-Validation",
+      desc: "Upload and pre-validate document formats, file sizes, and readiness before submitting to departments.",
+      tag: "Prototype",
       color: "green"
     },
     {
-      icon: <IconShieldCheck size={24} />,
-      title: "Document Reuse",
-      desc: "Securely reuse verified company certificates across departments without re-uploading.",
-      color: "teal"
-    },
-    {
       icon: <IconClockAlert size={24} />,
-      title: "Delay Alerts",
-      desc: "Early warnings on potential department bottlenecks to keep projects on schedule.",
+      title: "Delay Risk Alerts",
+      desc: "Early warnings on potential department bottlenecks to keep your project on schedule and within statutory timelines.",
+      tag: "Prototype",
       color: "amber"
     },
     {
       icon: <IconRepeat size={24} />,
-      title: "Compliance",
-      desc: "Automated reminders for annual factory licenses, inspections, and regulatory returns.",
+      title: "Compliance Intelligence",
+      desc: "Automated reminders and timeline tracking for annual factory licenses, safety audits, and regulatory returns.",
+      tag: "Prototype",
       color: "indigo"
     },
     {
       icon: <IconAward size={24} />,
       title: "Government Schemes",
-      desc: "Discover eligible state subsidies, power tariff discounts, and Package Scheme of Incentives (PSI 2019).",
+      desc: "Discover eligible state subsidies, power tariff discounts, and Package Scheme of Incentives (PSI 2019) benefits.",
+      tag: "Prototype",
       color: "orange"
     },
     {
-      icon: <IconBell size={24} />,
-      title: "Notifications",
-      desc: "Real-time SMS and portal alerts on scrutiny stages, queries, and clearance grants.",
-      color: "red"
+      icon: <IconBuilding size={24} />,
+      title: "Application Tracking",
+      desc: "Monitor all your industrial applications with live status updates, stored securely in PostgreSQL.",
+      tag: null,
+      color: "navy"
+    },
+    {
+      icon: <IconUser size={24} />,
+      title: "User-Specific Dashboard",
+      desc: "Personalized portal experience displaying your business credentials, filings, live statistics, and notifications.",
+      tag: null,
+      color: "teal"
     }
   ];
 
@@ -67,9 +75,9 @@ function Features({ onGetStarted }) {
       {/* Header */}
       <div className="page-intro-header">
         <div className="mini-badge">PLATFORM CAPABILITIES</div>
-        <h1>Key Features of UdyogFlow</h1>
+        <h1>Features of UdyogFlow</h1>
         <p>
-          Everything industrial investors need to navigate approvals and compliance smoothly.
+          Everything industrial investors need to navigate approvals, track compliance, and manage their clearance journey.
         </p>
       </div>
 
@@ -80,7 +88,12 @@ function Features({ onGetStarted }) {
             <div className={`feature-item-icon icon-${f.color}`}>
               {f.icon}
             </div>
-            <h3>{f.title}</h3>
+            <div className="feature-item-header">
+              <h3>{f.title}</h3>
+              {f.tag && (
+                <span className="feature-prototype-tag">{f.tag}</span>
+              )}
+            </div>
             <p>{f.desc}</p>
           </div>
         ))}
@@ -90,7 +103,7 @@ function Features({ onGetStarted }) {
       <div className="about-cta-box">
         <div>
           <h3>Start with your Approval Roadmap</h3>
-          <p>Tell us about your industry and receive your personalized checklist.</p>
+          <p>Tell us about your industry and receive your personalized clearance checklist.</p>
         </div>
         {onGetStarted && (
           <button
